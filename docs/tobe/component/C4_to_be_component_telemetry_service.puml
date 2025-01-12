@@ -1,0 +1,19 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(TS, "Telemetry Service", "Java Spring Boot", "Получение телеметрии") {
+  Component(Telemetry_Controller, "TelemetryController", "Контроллер телеметрии")
+  Component(Telemetry_Service, "TelemetryService", "Сервисный слой для обработки данных телеметрии")
+  Component(Telemetry_Repository, "TelemetryRepository", "Слой взаимодействия с БД сервиса регистрации пользователей")
+  ComponentDb(databaseTelemetryService, "Time Series DB", "Хранение данных телеметрии")
+
+
+  Rel(Telemetry_Controller, Telemetry_Service, "Вызовы бизнес-логики")
+  Rel(Telemetry_Service, Telemetry_Repository, "Чтение/Запись")
+  Rel(Telemetry_Repository, databaseTelemetryService, "Чтение/Запись")
+}
+
+  SystemQueue(eventBus, "Kafka", "Шина данных")
+  Rel(Telemetry_Service, eventBus, "События телеметрии")
+
+@enduml

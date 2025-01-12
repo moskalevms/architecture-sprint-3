@@ -1,0 +1,25 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(DMS, "Device Management Service", "Java Spring Boot", "Управление устройствами и сценариями") {
+  Component(Device_Management_Controller, "DeviceManagementController", "Контроллер управления устройствами, выполнение команд, настройка")
+  Component(Scenario_Controller, "ScenarioController", "Контроллер управления сценариями")
+  Component(Device_Management_Service, "DeviceManagementService", "Сервисный слой для обработки регистрации пользователей")
+  Component(Scenario_Service, "ScenarioService", "Сервисный слой для обработки регистрации устройств")
+  Component(Device_Management_Repository, "DeviceManagementRepository", "Слой взаимодействия с БД сервиса регистрации пользователей")
+  Component(Scenario_Repository, "ScenarioRepository", "Слой взаимодействия с БД сервиса регистрации устройств")
+  ComponentDb(databaseControlService, "Database", "Хранение сценариев")
+
+
+  Rel(Device_Management_Controller, Device_Management_Service, "Вызовы бизнес-логики")
+  Rel(Scenario_Controller, Scenario_Service, "Вызовы бизнес-логики")
+  Rel(Device_Management_Service, Device_Management_Repository, "Чтение/Запись")
+  Rel(Scenario_Service, Scenario_Repository, "Чтение/Запись")
+  Rel(Device_Management_Repository, databaseControlService, "Чтение/Запись")
+  Rel(Scenario_Repository, databaseControlService, "Чтение/Запись")
+}
+
+  SystemQueue(eventBus, "Kafka", "Шина данных")
+  Rel(Device_Service, eventBus, "События управления")
+
+@enduml

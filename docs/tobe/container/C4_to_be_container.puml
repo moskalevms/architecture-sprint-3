@@ -1,0 +1,49 @@
+@startuml
+!include <C4/C4_Container>
+!include <C4/C4_Context>
+!include <C4/C4>
+
+Person(customer, "Пользователь", "Человек, использующий систему для управления отоплением и получения данных о температуре.")
+
+System_Boundary(system, "Система Умный дом") {
+    Container(webApp, "Web App", "React/Angular/Vue.js", "Приложение для управления отоплением через веб-браузер.")
+    Container(mobileApp, "Mobile App", "iOS/Android", "Мобильное приложение для управления отоплением.")
+    Container(gtw, "API Gateway", "Java Spring Boot/Kong", "API шлюз для распределения запросов")
+    Container(iotGtw, "IoT Gateway", "Java Spring Boot", "IoT шлюз - адаптер для интеграции системы с внешними устройствами")
+    Container(deviceManagementService, "Microservice", "Java Spring Boot", "Сервис подключения, регистрации, синхронизации устройств")
+    Container(controlService, "Microservice", "Java Spring Boot", "Сервис сценариев и управления устройствами")
+    Container(telemetryService, "Microservice", "Java Spring Boot", "Сервис телеметрии")
+    Container(notificationService, "Microservice", "Java Spring Boot", "Сервис нотификаций")
+    ContainerDb(databaseDeviceManagement, "База данных", "PostgreSQL", "Хранит регистрационные данные устройств, данные пользователей, пользовательские настройки устройств.")
+    ContainerDb(databaseControlService, "База данных", "PostgreSQL", "Хранит пользовательские сценарии управления")
+    ContainerDb(databaseTelemetryService, "База данных", "Time Series DB/Prometheus", "Хранит данные телеметрии")
+    SystemQueue(eventBus, "Kafka", "Шина данных")
+
+}
+
+System_Ext(externalApiDevices, "Внешний источник данных телеметрии", "Zegbee/MQTT/Zway", "Получение данных с контрольно-измерительных приборов")
+System_Ext(externalApiControl, "Внешняя система - управление исполнительными устройствами", "Zegbee/MQTT/Zway", "Управление исполнительными устройствами")
+
+Rel(customer, webApp, "Взаимодействует через пользовательский интерфейс", "REST, HTTP/HTTPS")
+Rel(customer, mobileApp, "Взаимодействует через пользовательский интерфейс", "REST, HTTP/HTTPS")
+Rel(webApp, gtw, "API запросы", "REST, HTTP/HTTPS")
+Rel(mobileApp, gtw, "API запросы", "REST, HTTP/HTTPS")
+Rel(gtw, deviceManagementService, "API регистрации устройств", "REST, HTTP/HTTPS")
+Rel(gtw, controlService, "API управление устройствами", "REST, HTTP/HTTPS")
+Rel(gtw, telemetryService, "API обработки телеметрии", "REST, HTTP/HTTPS")
+Rel(gtw, notificationService, "API уведомлений", "REST, HTTP/HTTPS")
+Rel(deviceManagementService, databaseDeviceManagement, "Хранение данных устройств и пользователей", "JDBC/SQL")
+Rel(controlService, databaseControlService, "Хранение сценариев управления", "JDBC/SQL")
+Rel(telemetryService, databaseTelemetryService, "Хранение данных телеметрии", "Prometheus Exposition Format")
+Rel(deviceManagementService, eventBus, "События устройств", "JSON")
+Rel(controlService, eventBus, "События управления", "JSON")
+Rel(telemetryService, eventBus, "События телеметрии", "JSON")
+Rel(notificationService, eventBus, "Уведомления", "JSON")
+
+Rel(iotGtw, deviceManagementService, "Получение данных об устройствах", "REST, HTTP/HTTPS")
+Rel(controlService, iotGtw, "Управление устройствами", "REST, HTTP/HTTPS")
+Rel(iotGtw, telemetryService, "Передача данных телеметрии от адаптера в сервис", "REST, HTTP/HTTPS")
+
+Rel(externalApiDevices, iotGtw, "Регистрация устройств", "Zegbee/MQTT/Zway")
+Rel(iotGtw, externalApiControl, "Управление устройствами", "Zegbee/MQTT/Zway")
+@enduml

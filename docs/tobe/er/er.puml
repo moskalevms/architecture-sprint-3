@@ -1,0 +1,67 @@
+@startuml
+
+entity User {
+    *id : INTEGER
+    --
+    name : STRING
+    email : STRING
+    phone : STRING
+}
+
+entity House {
+    *id : INTEGER
+    --
+    user_id : INTEGER
+    name : STRING
+    address : STRING
+}
+
+entity Room {
+    *id : INTEGER
+    --
+    house_id : INTEGER
+    name : STRING
+}
+
+entity Device {
+    *id : INTEGER
+    --
+    type_id : INTEGER
+    room_id : INTEGER
+    serial_number : STRING
+    status : STRING
+}
+
+entity DeviceType {
+    *id : INTEGER
+    --
+    name : STRING
+}
+
+entity Scenario {
+    *id : INTEGER
+    --
+    name : STRING
+    description : STRING
+    device_id : INTEGER
+    condition : STRING
+    action : STRING
+    priority : INTEGER
+}
+
+entity TelemetryData {
+    *id : INTEGER
+    --
+    device_id : INTEGER
+    timestamp : DATETIME
+    data : STRING
+}
+
+User ||--|{ House : "владеет"
+House ||--|{ Room : "содержит"
+Room ||--|{ Device : "содержит"
+Device ||--o{ TelemetryData : "генерирует"
+Device ||--|{ Scenario : "связан"
+DeviceType ||--|{ Device : "определяет тип"
+
+@enduml
