@@ -16,6 +16,11 @@ entity House {
     address : STRING
 }
 
+entity "UserHouse" {
+  +user_id : INT
+  +house_id : INT
+}
+
 entity Room {
     *id : INTEGER
     --
@@ -57,8 +62,9 @@ entity TelemetryData {
     data : STRING
 }
 
-User ||--|{ House : "владеет"
-House ||--|{ Room : "содержит"
+User ||--o{ UserHouse : "владеет"
+House ||--o{ UserHouse : "принадлежит"
+House ||--o{ Room : "содержит"
 Room ||--|{ Device : "содержит"
 Device ||--o{ TelemetryData : "генерирует"
 Device ||--|{ Scenario : "связан"
