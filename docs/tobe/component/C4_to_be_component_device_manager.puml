@@ -1,0 +1,25 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(DMS, "Device Management Service", "Java Spring Boot", "Управление регистрацией пользователей и устройств") {
+  Component(Auth_Controller, "AuthenticationController", "Контроллер регистрации пользователей")
+  Component(Device_Controller, "DeviceController", "Контроллер регистрации устройств")
+  Component(Auth_Service, "AuthService", "Сервисный слой для обработки регистрации пользователей")
+  Component(Device_Service, "DeviceService", "Сервисный слой для обработки регистрации устройств")
+  Component(Auth_Repository, "AuthRepository", "Слой взаимодействия с БД сервиса регистрации пользователей")
+  Component(Device_Repository, "DeviceRepository", "Слой взаимодействия с БД сервиса регистрации устройств")
+  ComponentDb(databaseDeviceManagement, "Database", "Хранение устройств и пользователей")
+
+
+  Rel(Auth_Controller, Auth_Service, "Вызовы бизнес-логики")
+  Rel(Device_Controller, Device_Service, "Вызовы бизнес-логики")
+  Rel(Auth_Service, Auth_Repository, "Чтение/Запись")
+  Rel(Device_Service, Device_Repository, "Чтение/Запись")
+  Rel(Auth_Repository, databaseDeviceManagement, "Чтение/Запись")
+  Rel(Device_Repository, databaseDeviceManagement, "Чтение/Запись")
+}
+
+  SystemQueue(eventBus, "Kafka", "Шина данных")
+  Rel(Device_Service, eventBus, "События регистрации у удаления устройств")
+
+@enduml

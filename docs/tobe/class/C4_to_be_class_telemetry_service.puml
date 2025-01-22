@@ -1,0 +1,26 @@
+@startuml
+
+title Сервис телеметрии
+
+package "Telemetry Service" {
+    class TelemetryCollector {
+        +collectData()
+        +processData()
+    }
+
+    class DataAnalyzer {
+        +analyzeData()
+        +generateReport()
+    }
+}
+
+package "Infrastructure" {
+    interface Prometheus {
+        Интерфейс для взаимодействия с хранилищем данных
+    }
+}
+
+TelemetryCollector --> Prometheus : "Сохранение телеметрии"
+DataAnalyzer --> Prometheus : "Чтение телеметрии"
+
+@enduml

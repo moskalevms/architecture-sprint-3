@@ -1,0 +1,30 @@
+@startuml
+
+title Сервис управления устройствами и сценариями
+
+package "Device Management Service" {
+    class DeviceManager {
+        +addDevice()
+        +removeDevice()
+        +updateDevice()
+        +getDeviceStatus()
+    }
+
+    class ScenarioManager {
+        +createScenario()
+        +updateScenario()
+        +deleteScenario()
+        +runScenario()
+    }
+}
+
+package "Infrastructure" {
+    interface Kafka {
+        Интерфейс для взаимодействия с Kafka
+    }
+}
+
+DeviceManager --> Kafka : "Отправка событий"
+ScenarioManager --> Kafka : "Отправка событий"
+
+@enduml

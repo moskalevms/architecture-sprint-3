@@ -1,0 +1,28 @@
+@startuml
+
+title Сервис регистрации пользователей и устройств
+
+package "User Service" {
+    class UserController {
+        +registerUser()
+        +updateUser()
+        +deleteUser()
+    }
+
+    class DeviceController {
+        +registerDevice()
+        +updateDevice()
+        +deleteDevice()
+    }
+}
+
+package "Infrastructure" {
+    interface Kafka {
+         Интерфейс для взаимодействия с шиной данных Kafka
+    }
+}
+
+UserController --> Kafka : "Отправка событий"
+DeviceController --> Kafka : "Отправка событий"
+
+@enduml

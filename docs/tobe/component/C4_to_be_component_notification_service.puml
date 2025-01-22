@@ -1,0 +1,14 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(NS, "Notification Service", "Java Spring Boot", "Сервис нотификаций") {
+  Component(Notification_Controller, "NotificationController", "Контроллер уведомлений")
+  Component(Notification_Service, "NotificationService", "Сервисный слой для обработки уведомлений")
+
+  Rel(Notification_Controller, Notification_Service, "Вызовы бизнес-логики")
+}
+
+  SystemQueue(eventBus, "Kafka", "Шина данных")
+  Rel(Notification_Service, eventBus, "События уведомлений")
+
+@enduml
